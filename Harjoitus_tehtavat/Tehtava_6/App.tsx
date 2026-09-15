@@ -7,7 +7,7 @@ import { FlatList } from 'react-native';
 import { Image } from 'react-native';
 
 type Meals = {
-  idMeal: number;
+  idMeal: string;
   strMeal: string;
   strMealThumb: string;
 }
@@ -19,14 +19,8 @@ export default function App() {
 
   const handleFetch = () => {
     fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?i=${ingredient}`)
-      .then(response => {
-        if (!response.ok)
-          throw new Error("Error in fetch:" + response.statusText);
-
-        return response.json()
-      })
+      .then(response => {return response.json()})
       .then(data => setMeals(data.meals))
-      .catch(err => console.error(err));
   }
   return (
     <View style={styles.container}>
