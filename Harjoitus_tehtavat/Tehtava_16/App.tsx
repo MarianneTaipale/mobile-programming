@@ -1,17 +1,29 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Map from './Map';
+import { PaperProvider } from 'react-native-paper';
+import MapScreen from './Map';
 import MyPlaces from './MyPlaces';
+import type { RootStackParamList } from './types';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name = 'MyPlaces' component={MyPlaces}/>
-        <Stack.Screen name='Map' component={Map}/>
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+    return (
+        <PaperProvider>
+            <NavigationContainer>
+                <Stack.Navigator initialRouteName="MyPlaces">
+                    <Stack.Screen
+                        name="MyPlaces"
+                        component={MyPlaces}
+                        options={{ title: 'My Places' }}
+                    />
+                    <Stack.Screen
+                        name="Map"
+                        component={MapScreen}
+                        options={{ title: 'Map' }}
+                    />
+                </Stack.Navigator>
+            </NavigationContainer>
+        </PaperProvider>
+    );
 }
