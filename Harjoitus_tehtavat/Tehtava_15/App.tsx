@@ -2,6 +2,8 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import * as SQLite from 'expo-sqlite';
 import { useEffect, useState } from 'react';
+import { PaperProvider, Appbar } from 'react-native-paper';
+import ShoppingList from './ShoppingList';
 
 type Shopping = {
   id: number;
@@ -19,7 +21,7 @@ export default function App() {
     const db = await SQLite.openDatabaseAsync('shoppingdb');
 
     //luodaan taulu
-    await db.execAsync(`
+    await db.execAsync(`a
       CREATE TABLE IF NOT EXISTS shopping (
         id INTEGER PRIMARY KEY NOT NULL,
         product TEXT NOT NULL,
@@ -71,73 +73,13 @@ export default function App() {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.border}
-        placeholder="Product"
-        onChangeText={setProduct}
-        value={product}
-      />
+    <PaperProvider>
+      <Appbar.Header elevated>
+        <Appbar.Content title="Shopping list"/>
+      </Appbar.Header>
 
-      <TextInput
-        style={styles.border}
-        placeholder="Amount"
-        onChangeText={setAmount}
-        value={amount}
-      />
-
-      <Button
-        onPress={handleSave}
-        title="SAVE"
-      />
-
-      <Text style={styles.title}>Shopping list</Text>
-
-      {shoppingList.map(item => (
-        <View style={styles.item} key={item.id}>
-          <Text>
-            {item.product}, {item.amount}
-          </Text>
-
-          <Button
-            title="bought"
-            onPress={() => handleBought(item.id)}
-          />
-        </View>
-      ))}
-
+      <ShoppingList/>
       <StatusBar style="auto" />
-    </View>
+    </PaperProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  border: {
-    width: 275,
-    height: 40,
-    padding: 5,
-    marginBottom: 10,
-    borderWidth: 1,
-  },
-
-  title: {
-    fontSize: 20,
-    marginTop: 40,
-    marginBottom: 15,
-  },
-
-  item: {
-    width: 275,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-});
