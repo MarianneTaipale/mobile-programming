@@ -1,13 +1,6 @@
-
 import { useEffect, useState } from 'react';
-import {
-    StyleSheet,
-    View,
-    Text,
-    ScrollView,
-    Alert,
-} from 'react-native';
-import { Button, TextInput } from 'react-native-paper';
+import { StyleSheet, View, ScrollView, Alert, FlatList } from 'react-native';
+import { Button, TextInput, Card, Text} from 'react-native-paper';
 import * as SQLite from 'expo-sqlite';
 
 type Shopping = {
@@ -46,11 +39,6 @@ export default function ShoppingList() {
     };
 
     const handleSave = async () => {
-        if (!product.trim() || !amount.trim()) {
-            Alert.alert('Error', 'Enter both product and amount.');
-            return;
-        }
-
         try {
             const db = await SQLite.openDatabaseAsync('shoppingdb');
 
@@ -118,28 +106,29 @@ export default function ShoppingList() {
                 SAVE
             </Button>
 
-            <ScrollView style={styles.list}>
-                {shoppingList.map(item => (
-                    <View style={styles.item} key={item.id}>
-                        <Text style={styles.itemText}>
-                            {item.product}, {item.amount}
-                        </Text>
-
+            <FlatList
+                style={{ marginTop: 10, width: '90%' }}
+                data={shoppingList}
+                ListEmptyComponent={
+                    <Text style={styles.emptyText}>
+                        Shopping list is empty.
+                    </Text>
+                }
+                renderItem={({ item }) =>
+                    <Card style={{ marginBottom: 10 }}>
+                        <Card.Title title={item.product} />
+                        <Card.Content>
+                            <Text variant="bodyMedium">{item.amount}</Text>
+                        </Card.Content>
                         <Button
                             mode="outlined"
                             onPress={() => handleBought(item.id)}
                         >
                             BOUGHT
                         </Button>
-                    </View>
-                ))}
-
-                {shoppingList.length === 0 && (
-                    <Text style={styles.emptyText}>
-                        Your shopping list is empty.
-                    </Text>
-                )}
-            </ScrollView>
+                    </Card>
+                }
+            />
         </View>
     );
 }
@@ -161,21 +150,6 @@ const styles = StyleSheet.create({
     list: {
         flex: 1,
         width: '100%',
-    },
-    item: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingVertical: 8,
-        paddingHorizontal: 10,
-        marginBottom: 8,
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 8,
-    },
-    itemText: {
-        flex: 1,
-        fontSize: 16,
     },
     emptyText: {
         textAlign: 'center',
